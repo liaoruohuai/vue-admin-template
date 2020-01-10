@@ -6,6 +6,8 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import locale from 'element-ui/lib/locale/lang/en' // lang i18n
 
+import BaiduMap from 'vue-baidu-map'
+
 import '@/styles/index.scss' // global css
 
 import App from './App'
@@ -32,6 +34,11 @@ if (process.env.NODE_ENV === 'production') {
 Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
 // Vue.use(ElementUI)
+
+Vue.use(BaiduMap, {
+  // ak 是在百度地图开发者平台申请的密钥 详见 http://lbsyun.baidu.com/apiconsole/key */
+  ak: '2FFUmFmG5r5dyjo94tD7aVQcVndbM1lM'
+})
 
 Vue.config.productionTip = false
 

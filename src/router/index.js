@@ -147,7 +147,19 @@ export const constantRoutes = [
       }
     ]
   },
-
+  {
+    path: '/map',
+    component: Layout,
+    children: [
+      {
+        path: 'map',
+        name: 'Map',
+        component: () => import('@/views/map/index'),
+        meta: { title: 'Map', icon: 'wan_map' }
+      }
+    ]
+  },
+  /*
   {
     path: 'external-link',
     component: Layout,
@@ -158,7 +170,7 @@ export const constantRoutes = [
       }
     ]
   },
-
+       */
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
