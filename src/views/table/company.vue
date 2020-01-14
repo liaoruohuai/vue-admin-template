@@ -10,22 +10,39 @@
     >
       <el-table-column align="center" label="ID" width="50">
         <template slot-scope="scope">
-          {{ scope.$index }}
+          {{ scope.row.Id }}
         </template>
       </el-table-column>
-      <el-table-column label="危废类型" width="200" align="center">
+      <el-table-column label="单位名称" width="200" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.Htype }}</span>
+          <span>{{ scope.row.Name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="危废代码" width="200" align="center">
+      <el-table-column label="单位类型" width="400" align="center">
         <template slot-scope="scope">
-          {{ scope.row.Hcode }}
+          {{ scope.row.Type | typeFilter}}
         </template>
       </el-table-column>
-      <el-table-column label="危废内容" width="500" align="left">
-        <template slot-scope="scope">
-          {{ scope.row.Hdesc }}
+      <el-table-column align="center" label="Actions" min-width="200">
+        <template slot-scope="{row}">
+          <el-button
+            v-if="row.edit"
+            type="success"
+            size="small"
+            icon="el-icon-circle-check-outline"
+            @click="confirmEdit(row)"
+          >
+            Ok
+          </el-button>
+          <el-button
+            v-else
+            type="primary"
+            size="small"
+            icon="el-icon-edit"
+            @click="row.edit=!row.edit"
+          >
+            Edit
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -44,6 +61,13 @@ export default {
         deleted: 'danger'
       }
       return statusMap[status]
+    },
+    typeFilter(status) {
+      const statusMap = {
+        '01': '产废单位',
+        '02': '处置单位'
+      }
+      return statusMap[status]
     }
   },
   data() {
@@ -56,11 +80,22 @@ export default {
     this.fetchData()
   },
   methods: {
-    fetchData() {
+    async fetchData() {
       this.listLoading = true
-      getCompanyList().then(response => {
-        this.list = response.data
-        this.listLoading = false
+      const { data } = await getCompanyList()
+      this.list = data.map(v => {
+        this.$set(v, 'edit', false) // https://vuejs.org/v2/guide/reactivity.html
+
+        return v
+      })
+      this.listLoading = false
+    },
+    confirmEdit(row) {
+      row.edit = false
+
+      this.$message({
+        message: 'The title has been edited',
+        type: 'success'
       })
     }
   }

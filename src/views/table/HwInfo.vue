@@ -23,7 +23,7 @@
           {{ scope.row.Hcode }}
         </template>
       </el-table-column>
-      <el-table-column label="危废内容" width="500" align="left">
+      <el-table-column label="危废内容" min-width="500" align="left">
         <template slot-scope="scope">
           {{ scope.row.Hdesc }}
         </template>

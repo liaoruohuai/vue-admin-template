@@ -13,19 +13,24 @@
           {{ scope.$index }}
         </template>
       </el-table-column>
-      <el-table-column label="危废类型" width="200" align="center">
+      <el-table-column label="所属单位" width="100" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.Htype }}</span>
+          <span>{{ scope.row.Company }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="危废代码" width="200" align="center">
+      <el-table-column label="姓名" width="100" align="center">
         <template slot-scope="scope">
-          {{ scope.row.Hcode }}
+          {{ scope.row.UserName }}
         </template>
       </el-table-column>
-      <el-table-column label="危废内容" width="500" align="left">
+      <el-table-column label="手机号" width="120" align="left">
         <template slot-scope="scope">
-          {{ scope.row.Hdesc }}
+          {{ scope.row.UserPhone }}
+        </template>
+      </el-table-column>
+      <el-table-column label="微信关联ID" min-width="500" align="left">
+        <template slot-scope="scope">
+          {{ scope.row.UserOpenId }}
         </template>
       </el-table-column>
     </el-table>

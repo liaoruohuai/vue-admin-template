@@ -84,7 +84,7 @@ export const constantRoutes = [
         path: 'hwinfo',
         name: 'HwInfo',
         component: () => import('@/views/table/HwInfo'),
-        meta: { title: '危废信息表', icon: 'table' }
+        meta: { title: '危废品类信息表', icon: 'table' }
       }
     ]
   },

@@ -13,19 +13,41 @@
           {{ scope.$index }}
         </template>
       </el-table-column>
-      <el-table-column label="危废类型" width="200" align="center">
+      <el-table-column label="所属单位" width="200" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.Htype }}</span>
+          <span>{{ scope.row.Company }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="危废代码" width="200" align="center">
+      <el-table-column label="仓库名称" width="200" align="center">
         <template slot-scope="scope">
-          {{ scope.row.Hcode }}
+          {{ scope.row.Name }}
         </template>
       </el-table-column>
-      <el-table-column label="危废内容" width="500" align="left">
+      <el-table-column label="网关Id" width="500" align="left">
         <template slot-scope="scope">
-          {{ scope.row.Hdesc }}
+          {{ scope.row.ApId }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="Actions" min-width="200">
+        <template slot-scope="{row}">
+          <el-button
+            v-if="row.edit"
+            type="success"
+            size="small"
+            icon="el-icon-circle-check-outline"
+            @click="confirmEdit(row)"
+          >
+            Ok
+          </el-button>
+          <el-button
+            v-else
+            type="primary"
+            size="small"
+            icon="el-icon-edit"
+            @click="row.edit=!row.edit"
+          >
+            Edit
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -56,11 +78,22 @@ export default {
     this.fetchData()
   },
   methods: {
-    fetchData() {
+    async fetchData() {
       this.listLoading = true
-      getWareHouseList().then(response => {
-        this.list = response.data
-        this.listLoading = false
+      const { data } = await getWareHouseList()
+      this.list = data.map(v => {
+        this.$set(v, 'edit', false) // https://vuejs.org/v2/guide/reactivity.html
+
+        return v
+      })
+      this.listLoading = false
+    },
+    confirmEdit(row) {
+      row.edit = false
+
+      this.$message({
+        message: 'The title has been edited',
+        type: 'success'
       })
     }
   }
