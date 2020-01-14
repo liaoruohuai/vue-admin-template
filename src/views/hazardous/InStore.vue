@@ -99,9 +99,14 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        '00': 'success',
+        '00': 'warning',
         '01': 'gray',
-        '10': 'danger'
+        '02': 'danger',
+        '10': 'gray',
+        '11': 'danger',
+        '20': 'info',
+        '21': 'success',
+        '22': 'danger'
       }
       return statusMap[status]
     },
