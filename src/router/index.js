@@ -56,94 +56,56 @@ export const constantRoutes = [
   },
 
   {
-    path: '/example',
+    path: '/baseInfo',
     component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'example' },
+    redirect: '/baseInfo/Company',
+    name: 'BaseInfo',
+    meta: { title: '基础信息', icon: 'example' },
     children: [
       {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
+        path: 'company',
+        name: 'Company',
+        component: () => import('@/views/table/company'),
+        meta: { title: '公司管理', icon: 'table' }
       },
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
+        path: 'warehouse',
+        name: 'WareHouse',
+        component: () => import('@/views/table/wareHouse'),
+        meta: { title: '仓库管理', icon: 'table' }
+      },
+      {
+        path: 'operator',
+        name: 'Operator',
+        component: () => import('@/views/table/operator'),
+        meta: { title: '操作员管理', icon: 'table' }
+      },
+      {
+        path: 'hwinfo',
+        name: 'HwInfo',
+        component: () => import('@/views/table/HwInfo'),
+        meta: { title: '危废信息表', icon: 'table' }
       }
     ]
   },
-
   {
-    path: '/form',
+    path: '/hazardous',
     component: Layout,
+    redirect: '/hazardous/Instore',
+    name: 'Hazardous',
+    meta: { title: '危废管理', icon: 'form' },
     children: [
       {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
-      }
-    ]
-  },
-
-  {
-    path: '/nested',
-    component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
-    meta: {
-      title: 'Nested',
-      icon: 'nested'
-    },
-    children: [
-      {
-        path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
-          }
-        ]
+        path: 'company',
+        name: 'Company',
+        component: () => import('@/views/hazardous/InStore'),
+        meta: { title: '入库管理', icon: 'table' }
       },
       {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        meta: { title: 'menu2' }
+        path: 'warehouse',
+        name: 'WareHouse',
+        component: () => import('@/views/hazardous/OutTrans'),
+        meta: { title: '出库管理', icon: 'table' }
       }
     ]
   },
@@ -155,22 +117,10 @@ export const constantRoutes = [
         path: 'map',
         name: 'Map',
         component: () => import('@/views/map/index'),
-        meta: { title: 'Map', icon: 'wan_map' }
+        meta: { title: '地图展示', icon: 'wan_map' }
       }
     ]
   },
-  /*
-  {
-    path: 'external-link',
-    component: Layout,
-    children: [
-      {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
-      }
-    ]
-  },
-       */
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
