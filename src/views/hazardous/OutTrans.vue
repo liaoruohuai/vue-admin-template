@@ -35,7 +35,7 @@
           <span>{{ scope.row.CrtTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="联单编号" min-width="300" align="left">
+      <el-table-column label="联单编号" width="300" align="left">
         <template slot-scope="{row}">
           <template v-if="row.edit">
             <el-input v-model="row.RelateNumber" class="edit-input" size="small" />
@@ -52,12 +52,13 @@
           <span v-else>{{ row.RelateNumber }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Actions" width="200">
+      <el-table-column align="left" label="Actions" min-width="200">
         <template slot-scope="{row}">
           <el-button
             v-if="row.edit"
             type="success"
             size="small"
+            round
             icon="el-icon-circle-check-outline"
             @click="confirmEdit(row)"
           >
@@ -67,19 +68,67 @@
             v-else
             type="primary"
             size="small"
+            round
             icon="el-icon-edit"
             @click="row.edit=!row.edit"
           >
             Edit
           </el-button>
+          <el-button
+            v-if="row.isTran"
+            type="success"
+            round
+            size="small"
+            icon="el-icon-view"
+            @click="showMap(row)"
+          >
+            运输实时监控
+          </el-button>
+          <el-button
+            v-if="row.haveTran"
+            type="warning"
+            round
+            size="small"
+            icon="el-icon-video-camera"
+            @click="showMap(row)"
+          >
+            运输路线回放
+          </el-button>
         </template>
       </el-table-column>
+
+      <el-dialog :visible.sync="dialogMapVisible" custom-class="customWidth" title="运输实时监控" :append-to-body="true">
+        <template>
+          <baidu-map
+            class="map"
+            :center="center"
+            :zoom="zoom"
+            @ready="mapReady"
+          >
+            <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT" />
+            <bm-marker v-if="showNow" :position="now" :dragging="true" animation="BMAP_ANIMATION_BOUNCE">
+              <bm-label content="当前位置" :label-style="{color: 'red', fontSize : '24px'}" :offset="{width: -35, height: 30}" />
+            </bm-marker>
+            <bm-polyline v-if="showLine" :path="polylinePath" stroke-color="red" :stroke-opacity="0.5" :stroke-weight="5" :editing="true" @lineupdate="updatePolylinePath" />
+          </baidu-map>
+        </template>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="dialogMapVisible = false">Confirm</el-button>
+        </span>
+      </el-dialog>
+
     </el-table>
   </div>
 </template>
 
 <script>
-import { getOutTransList } from '@/api/OutTrans'
+import { getOutTransList, getBdGeo } from '@/api/OutTrans'
+
+export function translateCallback(data) {
+  if (data.status === 0) {
+    console.log(data.points[0])
+  }
+}
 
 export default {
   filters: {
@@ -95,7 +144,25 @@ export default {
   data() {
     return {
       list: null,
-      listLoading: true
+      listLoading: true,
+      dialogMapVisible: false,
+      center: { lng: 0, lat: 0 },
+      now: { lng: 0, lat: 0 },
+      showNow: false,
+      showLine: false,
+      polylinePath: [
+        { lng: 121.37074, lat: 31.056627 },
+        { lng: 121.37075, lat: 31.056644 },
+        { lng: 121.37092, lat: 31.057407 },
+        { lng: 121.410545, lat: 31.02709 },
+        { lng: 121.42347, lat: 31.031202 },
+        { lng: 121.42448, lat: 31.03152 },
+        { lng: 121.452736, lat: 30.97793 },
+        { lng: 121.46526, lat: 30.846714 },
+        { lng: 121.44754, lat: 30.818958 },
+        { lng: 121.44648, lat: 30.818216 }
+      ],
+      zoom: 3
     }
   },
   created() {
@@ -108,6 +175,27 @@ export default {
       this.list = data.map(v => {
         this.$set(v, 'edit', false) // https://vuejs.org/v2/guide/reactivity.html
         v.orginRelateNumber = v.RelateNumber //  will be used when user click the cancel botton
+        v.isTran = true
+        if (v.OutTransId === '1578041338' || v.OutTransId === '1578375435') {
+          v.haveTran = true
+        } else {
+          v.haveTran = false
+        }
+        if (v.OutTransId === '1578037711') {
+          v.nowLoc = { lng: 121.399138, lat: 31.165005 }
+          v.isTran = true
+        } else {
+          v.isTran = false
+        }
+
+        if (v.OutTransId === '1578041338') {
+          v.nowLoc = { lng: 121.452736, lat: 30.97793 }
+        }
+        if (v.OutTransId === '1578375435') {
+          v.nowLoc = { lng: 121.452736, lat: 30.97793 }
+          v.haveTran = true
+        }
+
         return v
       })
       console.log(this.list)
@@ -128,7 +216,45 @@ export default {
         message: 'The title has been edited',
         type: 'success'
       })
+    },
+    showMap(row) {
+      this.dialogMapVisible = true
+      // const Lat = 31.055882
+      // const Lng = 121.370834
+      this.showNow = row.isTran
+      this.showLine = row.haveTran
+      getBdGeo({ lng: row.nowLoc.lng.toString(), lat: row.nowLoc.lat.toString() }).then(response => {
+        response.data.map(v => {
+          console.log(v.Lat, v.Lng)
+          this.center.lat = v.Lat
+          this.center.lng = v.Lng
+          this.now.lat = v.Lat
+          this.now.lng = v.Lng
+          this.zoom = 12
+        })
+      })
+    },
+    mapReady({ BMap, map }) {
+      this.zoom = 13
+    },
+    updatePolylinePath(e) {
+      this.polylinePath = e.target.getPath()
     }
   }
 }
 </script>
+
+<style>
+  .map {
+    width: 1400px;
+    height: 800px;
+  }
+  .customWidth{
+    width: 1450px;
+    height:900px;
+    position: absolute;
+    margin: 0;
+    top:-15%;
+    left:10%
+  }
+</style>

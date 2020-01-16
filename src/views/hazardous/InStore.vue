@@ -1,7 +1,14 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="list.ZetagId" placeholder="ZETagId" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input
+        v-model="list.zetagid"
+        placeholder="ZETagId"
+        style="width: 200px;lett"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+        oninput="value=value.replace(/[^0-9A-Z]/g,'');"
+      />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
@@ -138,12 +145,29 @@ export default {
       this.listLoading = true
       getHwList().then(response => {
         this.list = response.data
+        this.originlist = response.data
         this.listLoading = false
       })
     },
     handleFilter() {
-      this.list.page = 1
-      this.fetchData()
+      const data = this.originlist
+      const target = this.list.zetagid
+      if (target) {
+        let tmplist = []
+        data.forEach(function(item, index) {
+          if (item.ZetagId.includes(target)){
+            console.log(item.ZetagId)
+            tmplist.push(item)
+          }
+        })
+        console.log(tmplist.length)
+        if (tmplist.length > 0 ){
+          this.list = tmplist
+        }
+
+      } else{
+        this.fetchData()
+      }
     }
   }
 }
